@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}Gestion des Contacts!{% endblock %}</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <style>
+        .custab {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 5% 0;
+            box-shadow: 3px 3px 2px #ccc;
+            transition: 0.5s;
+        }
+
+        .custab:hover {
+            box-shadow: 3px 3px 0px transparent;
+            transition: 0.5s;
+        }
+
+        .capitalize {
+            text-transform: capitalize;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <nav class="row navbar navbar-expand-lg navbar-light bg-light">
+        <span class="navbar-brand" href="#">Gestion des contacts</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/index.php?p=contact.index">Accueil <span class="sr-only"></span></a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+    <div class="row"><h5 class="text-right col-md-12">{{ session.auth.login }} : {{ session.auth.email }} </h5></div>
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+</div>
+<script>
+
+    $("#nom").focusout(function () {
+        var nom = $('#nom').val();
+        if(nom){
+            $.ajax({
+                type: 'POST',
+                url: 'http://leboncoin.local/palindrome',
+                data: {
+                    'name': nom
+                },
+                success: function (res) {
+                    if (res.response != true) {
+                        $('#alert').show();
+                        $('#nameStatus').empty().append("<span class='text-success'>- Le nom est valide</span>");
+                    } else {
+                        $('#alert').show();
+                        $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut pas être un palindrome</span>");
+                    }
+                }
+            });
+        } else {
+            $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut être nul </span>");
+        }
+
+    });
+
+    $("#checkEmail").click(function () {
+        var email = $('#email').val();
+        if(email){
+            $('#progress').show();
+            $.ajax({
+                type: 'POST',
+                url: 'http://leboncoin.local/email',
+                data: {
+                    'email': $('#email').val()
+                },
+                success: function (res) {
+                    $('#progress').hide();
+                    if (res.response == true) {
+                        $('#error').hide();
+                        $('#success').show();
+                    } else {
+                        $('#success').hide();
+                        $('#error').show();
+                        console.log(res.message);
+                    }
+                }
+            });
+        } else {
+            $('#success').hide();
+            $('#error').show();
+        }
+
+    });
+</script>
+</body>
+</html>

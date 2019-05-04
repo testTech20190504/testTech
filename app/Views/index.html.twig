@@ -1,0 +1,42 @@
+{% extends 'default.html.twig' %}
+
+{% block body %}
+
+    <div><h4 class="text-center">Liste des contacts </h4></div>
+    <div class="row row col-md-12 pull-right ">
+        <a href="/index.php?p=contact.add" class="btn btn-primary btn-xs pull-right"><b>+</b> Ajouter un contact</a>
+    </div>
+
+    <div class="row  custyle">
+
+        <table class="table table-striped custab">
+            <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+            {% for contact in contacts %}
+                <tr>
+                    <td>{{ contact.id|e }}</td>
+                    <td>{{ contact.nom|e }}</td>
+                    <td>{{ contact.prenom|e }}</td>
+                    <td>{{ contact.email|e }}</td>
+                    <td class="text-center">
+                        <a class='btn btn-info btn-xs' href="/index.php?p=address.index/{{ contact.id }}"><span
+                                    class="glyphicon glyphicon-edit"></span> Adresses</a>
+                        <a class='btn btn-info btn-xs' href="/contact.edit/{{ contact.id }}"><span
+                                    class="glyphicon glyphicon-edit"></span> Edition</a>
+                        <a href="/contact.delete/{{ contact.id }}" class="btn btn-danger btn-xs"><span
+                                    class="glyphicon glyphicon-remove"></span> Suppression</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+{% endblock %}

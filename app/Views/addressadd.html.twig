@@ -1,0 +1,70 @@
+{% extends 'default.html.twig' %}
+
+{% block body %}
+
+    <div class="card form-row">
+        <div class="card-body ">
+            <h3 class="card-subtitle mb-2 text-muted">Edition d' adresses </h3>
+            {% if error %}
+                <div  class="alert alert-danger" >
+                    Problème lors de la modification de l'adresse
+                </div>
+            {% endif %}
+            <form method="post" action="">
+                <div class="row adresses">
+                    <div class="col-md-1 col-lg-1">
+                        <div class="form-group">
+                            <label class="control-label">Numéro</label>
+                            <input type="text" id="number" name="number" value="{{ data.number }}"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label class="control-label">Rue</label>
+                            <input type="text" id="street" name="street" value="{{ data.street }}"
+                                   class="form-control"  onkeyup="this.value = this.value.toUpperCase();"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="control-label">Code postal</label>
+                            <input type="text" id="postalCode" name="postalCode" value="{{ data.postalCode }}"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-3">
+                        <div class="form-group">
+                            <label class="control-label">Ville</label>
+                            <input type="text" id="city" name="city" value="{{ data.city }}" class="form-control" onkeyup="this.value = this.value.toUpperCase();"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label class="control-label">Pays</label>
+                            <input type="text" id="country" name="country" value="{{ data.country }}"
+                                   class="form-control" onkeyup="this.value = this.value.toUpperCase();"/>
+                            <input type="hidden" id="idContact" value="{{ idContact }}" name="idContact"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="pull-right">
+                            <button class="btn btn-success btn-lg" type="submit">Envoyer</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+{% endblock %}

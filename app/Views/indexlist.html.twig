@@ -1,0 +1,49 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<style>
+    .custab {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin: 5% 0;
+        box-shadow: 3px 3px 2px #ccc;
+        transition: 0.5s;
+    }
+
+    .custab:hover {
+        box-shadow: 3px 3px 0px transparent;
+        transition: 0.5s;
+    }
+</style>
+
+<div class="container">
+    <div>Liste des contacts</div>
+    <div class="row col-md-12  custyle">
+        <table class="table table-striped custab">
+            <thead>
+            <a href="index.php?p=contact.add" class="btn btn-primary btn-xs pull-right"><b>+</b> Ajouter un contact</a>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+            {% for contact in contacts %}
+                <tr>
+                    <td>{{ contact.id|e }}</td>
+                    <td>{{ contact.nom|e }}</td>
+                    <td>{{ contact.prenom|e }}</td>
+                    <td>{{ contact.email|e }}</td>
+                    <td class="text-center">
+                        <a class='btn btn-info btn-xs' href="?p=contact.edit&id={{ contact.id }}"><span
+                                    class="glyphicon glyphicon-edit"></span> Edit</a>
+                        <a href="?p=contact.delete&id={{ contact.id }}" class="btn btn-danger btn-xs"><span
+                                    class="glyphicon glyphicon-remove"></span> Del</a></td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+</div>
