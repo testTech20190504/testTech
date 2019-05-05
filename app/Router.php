@@ -23,6 +23,7 @@ Class Router
                 'contact/index',
                 'contact/add',
                 'contact/edit',
+                'contact/delete',
 
                 'user/login',
                 'error/error',

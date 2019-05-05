@@ -90,12 +90,26 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $id
-     * @param $fields
+     * Update statement
+     *
+     * @param int $id
+     * @param array $fields
      */
-    public function update($id, $fields)
+    public function update(int $id, array $fields)
     {
-        //@todo
+        $fields = $this->cleanInputs($fields);
+
+        $sqlParts = [];
+        $attributes = [];
+
+        foreach ($fields as $k => $v) {
+            $sqlParts[] = "$k = ?";
+            $attributes[] = $v;
+        }
+
+        $sqlPart = implode(', ', $sqlParts);
+
+        return $this->query("UPDATE {$this->table} SET $sqlPart WHERE id = $id", $attributes, true);
     }
 
     /**

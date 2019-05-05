@@ -23,7 +23,7 @@ interface ControllerInterface
     /**
      * Methode pour page de suppression
      */
-    public function delete();
+    public function delete(int $parameter);
 
     /**
      * @param array $data
