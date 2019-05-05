@@ -1,6 +1,7 @@
 <?php
 
-define('ROOT', dirname(__DIR__ . '/..'));
+define('ROOT', dirname(__DIR__));
+
 require ROOT . '/app/App.php';
 App::load();
 
