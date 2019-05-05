@@ -52,4 +52,7 @@ COMMIT;
 
 INSERT INTO `users` (`id`, `login`, `email`, `password`) VALUES
 (1, 'admin', 'lebonoin@test.fr', '21232f297a57a5a743894a0e4a801fc3');
+
+INSERT INTO `users` (`id`, `login`, `email`, `password`) VALUES
+(2, 'test', 'test@test.fr', '098f6bcd4621d373cade4e832627b4f6');
 COMMIT;
