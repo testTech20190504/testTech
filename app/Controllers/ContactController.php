@@ -6,7 +6,6 @@ use App\Controllers\ControllerInterface;
 use App\Database;
 use App\Models\ContactModel as Contact;
 use Exception;
-use InvalidArgumentException;
 
 class ContactController extends MainController implements ControllerInterface
 {
@@ -45,6 +44,12 @@ class ContactController extends MainController implements ControllerInterface
         if (!empty($_POST)) {
 
             try {
+                $errors = $this->validPostData($_POST);
+
+                if (!empty($errors)) {
+                    throw new Exception('POST data are invalid');
+                }
+
                 $response = $this->sanitize($_POST);
 
                 if (!empty($response)) {
@@ -60,15 +65,18 @@ class ContactController extends MainController implements ControllerInterface
                     ]);
 
                     header('Location: /contact/index');
-
                 }
-            } catch (Exception $e) {
-            } catch (\PDOException $e) {
 
+            } catch (Exception $e) {
+                // silent error
+            } catch (\PDOException $e) {
+                // silent error
+            } finally {
+                $error = true;
             }
         }
 
-        echo $this->twig->render('add.html.twig', ['error' => $error]);
+        echo $this->twig->render('add.html.twig', ['error' => $error, 'errors' => $errors]);
     }
 
     /**
@@ -93,26 +101,35 @@ class ContactController extends MainController implements ControllerInterface
     /**
      * @param array $data
      * @return array
-     * @throws Exception
-     * @throws InvalidArgumentException
      */
-    public function sanitize(array $data = []): array
+    public function validPostData(array $data = []): array
     {
-         $response = [];
+        $errors = [];
 
         if (empty($data['nom'])) {
-            throw new Exception('Le nom est obligatoire');
+            $errors[] = 'Le nom est obligatoire';
         }
 
         if (empty($data['prenom'])) {
-            throw new Exception('Le prenom est obligatoire');
+            $errors[] = 'Le prenom est obligatoire';
         }
 
         if (empty($data['email'])) {
-            throw new Exception('Le email est obligatoire');
+            $errors[] = 'Le email est obligatoire';
         } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Le format de l\'email est invalide');
+            $errors[] = 'Le format de l\'email est invalide';
         }
+
+        return $errors;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function sanitize(array $data = []): array
+    {
+        $response = [];
 
         $prenom = ucfirst($data['prenom']);
         $nom    = ucfirst($data['nom']);
