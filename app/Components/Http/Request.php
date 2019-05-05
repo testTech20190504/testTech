@@ -3,8 +3,9 @@
 namespace App\Components\Http;
 
 use \App\Components\Http\HttpRequestException;
-use \App\Controllers\ContactController;
+use \App\Controllers\ErrorController;
 use \Error;
+use \Exception;
 
 Class Request
 {
@@ -36,6 +37,7 @@ Class Request
     /**
      * Resolution du match de la route
      * @param string $routes
+     * @throws HttpRequestException
      */
     public function matchRoute(array $routes): void
     {
@@ -45,15 +47,16 @@ Class Request
             error_log(sprintf('[ERROR] Request::matchRoute::Route Not Found : %s', $route));
 
             $this->ressourceNotFoundHeader();
-            throw new HttpRequestException('Request::matchRoute::Route not found');
+            throw new HttpRequestException('Request::matchRoute::Route not found (Error 404)');
         }
     }
 
     /**
-     * Resolution de la route
+     * Resolution de la requete
      * @param string $routes
+     * @throws HttpRequestException
      */
-    public function resolveRoute()
+    public function resolveRequest()
     {
         $controllerName = $this->getControllerName();
         $actionName = $this->getActionName();
@@ -65,19 +68,20 @@ Class Request
             error_log(sprintf('[ERROR] Request::resolveRoute::%s', $e->getMessage()));
 
             $this->ressourceNotFoundHeader();
-            throw new HttpRequestException('Request::resolveRoute::Error on resolve');
+            throw new HttpRequestException('Request::resolveRoute::Ressource Not Found');
         }
     }
 
     /**
      * Gestion d'une ressource non trouvée
+     * @param Exception $e
      */
-    public function ressourceNotFoundDispatch(): void
+    public function ressourceNotFoundDispatch(Exception $e): void
     {
         switch ($this->httpVerb) {
             case 'get':
-                $controller = new ContactController();
-                $controller->index();
+                $controller = new ErrorController();
+                $controller->error($e);
                 break;
 
             default:
