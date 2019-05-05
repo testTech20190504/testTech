@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Components\Auth\Auth;
 use App\Controllers\MainController;
-use App;
+use App\Database;
 
 class UserController extends MainController
 {
@@ -18,12 +19,15 @@ class UserController extends MainController
 
         if (!empty($_POST)) {
 
-            if ($this->auth->login($_POST['login'], $_POST['password'])) {
-                header('Location: index.php?p=contact.index');
+            $auth = new Auth(new Database());
+
+            if ($auth->login($_POST['login'], $_POST['password'])) {
+                header('Location: /contact/index');
             } else {
                 $errors = true;
             }
         }
+
         echo $this->twig->render('login.html.twig', ['errors' => $errors]);
     }
 }

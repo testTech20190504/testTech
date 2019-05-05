@@ -22,6 +22,8 @@ Class Router
 
                 '/contact/index',
                 '/contact/add',
+
+                '/user/login',
             ];
         }
 

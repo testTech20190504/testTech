@@ -2,12 +2,12 @@
 
 namespace App\Components\Auth;
 
-use App\Components\Database;
+use App\Database;
 
 abstract class AbstractAuth
 {
     /** @var Database  */
-    private $database;
+    protected $database;
 
     /**
      * AbstractAuth constructor.
