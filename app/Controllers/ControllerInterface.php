@@ -30,9 +30,4 @@ interface ControllerInterface
      * @return array
      */
     public function sanitize(array $data = []): array;
-
-    /**
-     * Methode pour page de creation
-     */
-    public function create();
 }

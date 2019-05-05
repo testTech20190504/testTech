@@ -3,10 +3,10 @@
 namespace App\Controllers;
 
 use App\Controllers\ControllerInterface;
-use InvalidArgumentException;
+use App\Database;
+use App\Models\ContactModel as Contact;
 use Exception;
-
-use App\Components\Api\Api;
+use InvalidArgumentException;
 
 class ContactController extends MainController implements ControllerInterface
 {
@@ -41,31 +41,34 @@ class ContactController extends MainController implements ControllerInterface
     public function add()
     {
         $error = false;
+
         if (!empty($_POST)) {
-            $response = $this->sanitize($_POST);
-            if ($response["response"]) {
-                $result = $this->Contact->create([
-                    'nom'    => $response['nom'],
-                    'prenom' => $response['prenom'],
-                    'email'  => $response['email'],
-                    'userId' => $this->userId
-                ]);
-                if ($result) {
-                    header('Location: /index.php?p=contact.index');
+
+            try {
+                $response = $this->sanitize($_POST);
+
+                if (!empty($response)) {
+
+                    $db = new Database();
+                    $contact = new Contact($db);
+
+                    $contact->create([
+                        'nom'    => $response['nom'],
+                        'prenom' => $response['prenom'],
+                        'email'  => $response['email'],
+                        'userId' => 1, //$this->userId
+                    ]);
+
+                    header('Location: /contact/index');
+
                 }
-            } else {
-                $error = true;
+            } catch (Exception $e) {
+            } catch (\PDOException $e) {
+
             }
         }
-        echo $this->twig->render('add.html.twig', ['error' => $error]);
-    }
 
-    /**
-     * Creation d'un contact
-     */
-    public function create()
-    {
-        //@todo
+        echo $this->twig->render('add.html.twig', ['error' => $error]);
     }
 
     /**
@@ -95,33 +98,41 @@ class ContactController extends MainController implements ControllerInterface
      */
     public function sanitize(array $data = []): array
     {
-        if (empty($nom)) {
+         $response = [];
+
+        if (empty($data['nom'])) {
             throw new Exception('Le nom est obligatoire');
         }
 
-        if (empty($prenom)) {
+        if (empty($data['prenom'])) {
             throw new Exception('Le prenom est obligatoire');
         }
 
-        if (empty($email)) {
+        if (empty($data['email'])) {
             throw new Exception('Le email est obligatoire');
-        } elseif (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('Le format de l\'email est invalide');
         }
 
-        $prenom = strtoupper($data['prenom']);
-        $nom    = strtoupper($data['nom']);
+        $prenom = ucfirst($data['prenom']);
+        $nom    = ucfirst($data['nom']);
         $email  = strtolower($data['email']);
 
-        $isPalindrome = $this->apiClient('palindrome', ['name' => $nom]);
-        $isEmail = $this->apiClient('email', ['email' => $email]);
-        if ((!$isPalindrome->response) && $isEmail->response && $prenom) {
-            return [
-                'response' => true,
+        $isPalindrome = false; //$this->apiClient('palindrome', ['name' => $data['nom']]);
+        $isEmail = json_decode($this->apiClient('email', ['email' => $data['email']]));
+
+        if (
+            /*!$isPalindrome->response
+            &&*/ $isEmail->response
+            && $prenom
+        ) {
+            $response = [
                 'email'    => $email,
                 'prenom'   => $prenom,
                 'nom'      => $nom
             ];
         }
+
+        return $response;
     }
 }
