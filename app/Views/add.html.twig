@@ -10,6 +10,14 @@
             {% if error %}
                 <div  class="alert alert-danger" >
                     Problème lors de la création du contact
+
+                    {% if errors %}
+                        <ul>
+                            {% for errorMessage in errors %}
+                                <li>{{ errorMessage }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
             {% endif %}
             <form method="post" action="" autocomplete="off">

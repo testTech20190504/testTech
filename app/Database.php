@@ -25,10 +25,10 @@ class Database
      * @param string $dbHost
      */
     public function __construct(
-        $dbName,
+        $dbName = 'testtech',
         $dbUser = 'root',
-        $dbPass = 'root',
-        $dbHost = 'localhost'
+        $dbPass = 'testtech',
+        $dbHost = 'mysql'
     ) {
         $this->dbName = $dbName;
         $this->dbUser = $dbUser;
@@ -68,6 +68,7 @@ class Database
     public function query($statement, $class_name = null, $one = false)
     {
         $req = $this->getPDO()->query($statement);
+
         if (
             strpos($statement, 'UPDATE') === 0
             || strpos($statement, 'INSERT') === 0
@@ -75,16 +76,19 @@ class Database
         ) {
             return $req;
         }
+
         if ($class_name === null) {
             $req->setFetchMode(PDO::FETCH_OBJ);
         } else {
             $req->setFetchMode(PDO::FETCH_CLASS, $class_name);
         }
+
         if ($one) {
             $datas = $req->fetch();
         } else {
             $datas = $req->fetchAll();
         }
+
         return $datas;
     }
 
@@ -103,6 +107,7 @@ class Database
     ) {
         $req = $this->getPDO()->prepare($statement);
         $res = $req->execute($attributes);
+
         if (
             strpos($statement, 'UPDATE') === 0
             || strpos($statement, 'INSERT') === 0
@@ -110,16 +115,19 @@ class Database
         ) {
             return $res;
         }
+
         if ($class_name === null) {
             $req->setFetchMode(PDO::FETCH_OBJ);
         } else {
             $req->setFetchMode(PDO::FETCH_CLASS, $class_name);
         }
+
         if ($one) {
             $datas = $req->fetch();
         } else {
             $datas = $req->fetchAll();
         }
+
         return $datas;
     }
 

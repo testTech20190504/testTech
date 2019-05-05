@@ -75,15 +75,18 @@ abstract class AbstractModel
     public function create($fields)
     {
         $fields = $this->cleanInputs($fields);
+
         $sqlParts = [];
         $attributes = [];
+
         foreach ($fields as $k => $v) {
             $sqlParts[] = "$k = ?";
             $attributes[] = $v;
         }
+
         $sqlPart = implode(', ', $sqlParts);
-        return $this->query("INSERT INTO {$this->table} SET $sqlPart",
-            $attributes, true);
+
+        return $this->query("INSERT INTO {$this->table} SET $sqlPart", $attributes, true);
     }
 
     /**
@@ -116,14 +119,15 @@ abstract class AbstractModel
     private function cleanInputs($data)
     {
         $cleanInputs = [];
+
         if (is_array($data)) {
+
             foreach ($data as $k => $v) {
                 $cleanInputs[$k] = $this->cleanInputs($v);
             }
+
         } else {
-            if (get_magic_quotes_gpc()) {
-                $data = trim(stripslashes($data));
-            }
+            $data = htmlspecialchars($data);
             $data = strip_tags($data);
             $cleanInputs = trim($data);
         }
