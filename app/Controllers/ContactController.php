@@ -89,15 +89,16 @@ class ContactController extends MainController implements ControllerInterface
             }
         }
 
-        echo $this->twig->render('add.html.twig', ['error' => $error, 'errors' => $errors]);
+        echo $this->twig->render('add.html.twig', ['data' => $_POST, 'error' => $error, 'errors' => $errors]);
     }
 
     /**
      * Modification d'un contact
+     * @param integer $parameter
      */
-    public function edit()
+    public function edit(int $parameter)
     {
-        //@todo
+        var_dump($parameter);
     }
 
     /**

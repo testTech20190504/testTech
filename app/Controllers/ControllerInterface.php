@@ -16,8 +16,9 @@ interface ControllerInterface
 
     /**
      * Methode pour page de modification
+     * @param mixed $parameter
      */
-    public function edit();
+    public function edit(int $parameter);
 
     /**
      * Methode pour page de suppression
