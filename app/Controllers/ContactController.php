@@ -136,9 +136,13 @@ class ContactController extends MainController implements ControllerInterface
             } finally {
                 $error = true;
             }
+
+            $data = $_POST;
+        } else {
+            $data = $contactToEdit;
         }
 
-        echo $this->twig->render('add.html.twig', ['data' => $contactToEdit, 'error' => $error, 'errors' => $errors]);
+        echo $this->twig->render('add.html.twig', ['data' => $data, 'error' => $error, 'errors' => $errors]);
     }
 
     /**
