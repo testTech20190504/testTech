@@ -15,16 +15,17 @@ Class Router
 
         if (!isset($routes)) {
             $routes = [
-                '/ajax/email',
-                '/api/email',
-                '/ajax/palindrome',
-                '/api/palindrome',
+                'ajax/email',
+                'api/email',
+                'ajax/palindrome',
+                'api/palindrome',
 
-                '/contact/index',
-                '/contact/add',
+                'contact/index',
+                'contact/add',
+                'contact/edit',
 
-                '/user/login',
-                '/error/error',
+                'user/login',
+                'error/error',
             ];
         }
 
@@ -36,14 +37,15 @@ Class Router
      */
     public static function dispatch(): void
     {
-        $request = new Request();
-
-        $request->setRoute($_SERVER['REQUEST_URI']);
-        $request->setHttpVerb($_SERVER['REQUEST_METHOD']);
-
         try {
+            $request = new Request();
+
+            $request->setHttpVerb($_SERVER['REQUEST_METHOD']);
+            $request->setRoute($_SERVER['REQUEST_URI']);
+
             $request->matchRoute(self::getRoutes());
             $request->resolveRequest();
+
         } catch (Exception $e) {
             $request->ressourceNotFoundDispatch($e);
         }

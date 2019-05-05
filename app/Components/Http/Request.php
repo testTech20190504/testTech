@@ -16,13 +16,26 @@ Class Request
     /**
      * Set route & routeParts
      * @param string $uri
+     * @throws HttpRequestException
      */
     public function setRoute($uri): void
     {
-        // route par default
-        $this->route = ($uri === '/') ? '/contact/index' : $uri;
-        // @TODO improve this
-        $this->routeParts = explode('/', $this->route);
+        $uri = ($uri === '/') ? '/contact/index' : $uri;
+
+        //  parsing d' uri basique sur le modele /controller/action/parametre-optionnel
+        preg_match('|\/([a-z]+)\/([a-z]+)\/?([0-9]*)|', $uri, $matches);
+
+        if (empty($matches)) {
+            throw new HttpRequestException('Request::matchRoute::Route not found (Error 404)');
+        }
+
+        $this->route = $matches[1] . '/' . $matches[2];
+
+        $this->routeParts = [
+            $matches[1],
+            $matches[2],
+            $matches[3],
+        ];
     }
 
     /**
@@ -63,9 +76,9 @@ Class Request
 
         try {
             $controller = new $controllerName();
-            $controller->$actionName();
+            $controller->$actionName($this->getUriParam());
         } catch (Error $e) {
-            error_log(sprintf('[ERROR] Request::resolveRoute::%s', $e->getMessage()));
+            error_log(sprintf('[ERROR] Request::resolveRoute::%s on %s line %s', $e->getMessage(), $e->getFile(), $e->getLine()));
 
             $this->ressourceNotFoundHeader();
             throw new HttpRequestException('Request::resolveRoute::Ressource Not Found');
@@ -103,7 +116,7 @@ Class Request
      */
     public function getControllerName(): string
     {
-        $controllerName = ucfirst($this->routeParts[1]);
+        $controllerName = ucfirst($this->routeParts[0]);
         return sprintf('\App\Controllers\\%sController', $controllerName);
     }
 
@@ -112,6 +125,15 @@ Class Request
      * @return string
      */
     public function getActionName(): string
+    {
+        return $this->routeParts[1];
+    }
+
+    /**
+     * Parametre
+     * @return mixed
+     */
+    public function getUriParam()
     {
         return $this->routeParts[2];
     }
