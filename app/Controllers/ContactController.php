@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App;
 use App\Components\Auth\Auth;
 use App\Controllers\ControllerInterface;
 use App\Database;
@@ -16,11 +17,16 @@ class ContactController extends MainController implements ControllerInterface
     protected $userId;
 
     /**
+     * @var ContactModel $contact
+     */
+    protected $contact;
+
+    /**
      * ContactController constructor.
      */
     public function __construct()
     {
-        $auth = new Auth(new Database());
+        $auth = new Auth(App::getInstance()->getDatabase());
 
         if (!$auth->logged()) {
             header('Location: /user/login');
@@ -29,6 +35,7 @@ class ContactController extends MainController implements ControllerInterface
         parent::__construct();
 
         $this->userId = $_SESSION['auth']['id'];
+        $this->contact = new Contact(App::getInstance()->getDatabase());
     }
 
     /**
@@ -37,13 +44,11 @@ class ContactController extends MainController implements ControllerInterface
     public function index()
     {
         $contacts = [];
+
         if (!empty($this->userId)) {
-
-            $db = new Database();
-            $contact = new Contact($db);
-
-            $contacts = $contact->getContactByUser($this->userId);
+            $contacts = $this->contact->getContactByUser($this->userId);
         }
+
         echo $this->twig->render('index.html.twig', ['contacts' => $contacts]);
     }
 
@@ -67,10 +72,7 @@ class ContactController extends MainController implements ControllerInterface
 
                 if (!empty($response)) {
 
-                    $db = new Database();
-                    $contact = new Contact($db);
-
-                    $contact->create([
+                    $this->contact->create([
                         'nom'    => $response['nom'],
                         'prenom' => $response['prenom'],
                         'email'  => $response['email'],

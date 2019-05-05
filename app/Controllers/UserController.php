@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
+use App;
 use App\Components\Auth\Auth;
 use App\Controllers\MainController;
 use App\Database;
+use Exception;
 
 class UserController extends MainController
 {
@@ -19,13 +21,17 @@ class UserController extends MainController
 
         if (!empty($_POST)) {
 
-            $auth = new Auth(new Database());
+            try {
+                $auth = new Auth(App::getInstance()->getDatabase());
 
-            if ($auth->login($_POST['login'], $_POST['password'])) {
-                header('Location: /contact/index');
-            } else {
-                $errors = true;
+                if ($auth->login($_POST['login'], $_POST['password'])) {
+                    header('Location: /contact/index');
+                }
+            } catch (Exception $e) {
+                //  silent error
             }
+
+            $errors = true;
         }
 
         echo $this->twig->render('login.html.twig', ['errors' => $errors]);

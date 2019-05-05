@@ -77,7 +77,7 @@ Class Request
         try {
             $controller = new $controllerName();
             $controller->$actionName($this->getUriParam());
-        } catch (Error $e) {
+        } catch (Exception $e) {
             error_log(sprintf('[ERROR] Request::resolveRoute::%s on %s line %s', $e->getMessage(), $e->getFile(), $e->getLine()));
 
             $this->ressourceNotFoundHeader();
