@@ -24,6 +24,7 @@ Class Router
                 '/contact/add',
 
                 '/user/login',
+                '/error/error',
             ];
         }
 
@@ -42,9 +43,9 @@ Class Router
 
         try {
             $request->matchRoute(self::getRoutes());
-            $request->resolveRoute();
+            $request->resolveRequest();
         } catch (Exception $e) {
-            $request->ressourceNotFoundDispatch();
+            $request->ressourceNotFoundDispatch($e);
         }
     }
 }
