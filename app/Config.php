@@ -27,10 +27,10 @@ class Config
     public function __construct()
     {
         $this->settings = [
-            "db_user" => "newuser",
-            "db_pass" => "password",
-            "db_host" => "localhost",
-            "db_name" => "crm"
+            "db_user" => "root",
+            "db_pass" => "testtech",
+            "db_host" => "mysql",
+            "db_name" => "testtech",
         ];
     }
 

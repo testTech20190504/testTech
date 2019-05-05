@@ -15,19 +15,22 @@ class Auth extends AbstractAuth
      *
      * @return boolean
      */
-    public function login($login, $password)
+    public function login($login, $password): bool
     {
-        $user = $this->database->prepare('SELECT * FROM users WHERE login = ?',
-            [$login], null, true);
+        $user = $this->database->prepare('SELECT * FROM users WHERE login = ?', [$login], null, true);
+
         if ($user) {
             if ($user->password === md5($password)) {
-                $_SESSION['auth'] = ["id"    => $user->id,
-                                     "login" => $user->login,
-                                     "email" => $user->email
+
+                $_SESSION['auth'] = [
+                    "id"    => (int) $user->id,
+                    "login" => $user->login,
+                    "email" => $user->email,
                 ];
                 return true;
             }
         }
+
         return false;
     }
 }

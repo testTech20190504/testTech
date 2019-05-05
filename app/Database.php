@@ -25,10 +25,10 @@ class Database
      * @param string $dbHost
      */
     public function __construct(
-        $dbName = 'testtech',
-        $dbUser = 'root',
-        $dbPass = 'testtech',
-        $dbHost = 'mysql'
+        $dbName = '',
+        $dbUser = '',
+        $dbPass = '',
+        $dbHost = ''
     ) {
         $this->dbName = $dbName;
         $this->dbUser = $dbUser;
