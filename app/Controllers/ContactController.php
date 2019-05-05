@@ -50,7 +50,7 @@ class ContactController extends MainController implements ControllerInterface
                     throw new Exception('POST data are invalid');
                 }
 
-                $response = $this->prepareData($_POST);
+                $response = $this->formatDataForDb($_POST);
 
                 if (!empty($response)) {
 
@@ -133,12 +133,12 @@ class ContactController extends MainController implements ControllerInterface
      * @param array $data
      * @return array
      */
-    public function prepareData(array $data = []): array
+    public function formatDataForDb(array $data = []): array
     {
         $response = [];
 
-        $prenom = ucfirst($data['prenom']);
-        $nom    = ucfirst($data['nom']);
+        $prenom = ucfirst(strtolower($data['prenom']));
+        $nom    = ucfirst(strtolower($data['nom']));
         $email  = strtolower($data['email']);
 
         $response = [
