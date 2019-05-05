@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Components\Auth\Auth;
 use App\Controllers\ControllerInterface;
 use App\Database;
 use App\Models\ContactModel as Contact;
@@ -9,7 +10,9 @@ use Exception;
 
 class ContactController extends MainController implements ControllerInterface
 {
-    /** @var int $userId */
+    /**
+     * @var int $userId
+     */
     protected $userId;
 
     /**
@@ -17,6 +20,12 @@ class ContactController extends MainController implements ControllerInterface
      */
     public function __construct()
     {
+        $auth = new Auth(new Database());
+
+        if (!$auth->logged()) {
+            header('Location: /user/login');
+        }
+
         parent::__construct();
 
         $this->userId = $_SESSION['auth']['id'];
@@ -29,7 +38,11 @@ class ContactController extends MainController implements ControllerInterface
     {
         $contacts = [];
         if (!empty($this->userId)) {
-            $contacts = $this->Contact->getContactByUser($this->userId);
+
+            $db = new Database();
+            $contact = new Contact($db);
+
+            $contacts = $contact->getContactByUser($this->userId);
         }
         echo $this->twig->render('index.html.twig', ['contacts' => $contacts]);
     }
@@ -61,7 +74,7 @@ class ContactController extends MainController implements ControllerInterface
                         'nom'    => $response['nom'],
                         'prenom' => $response['prenom'],
                         'email'  => $response['email'],
-                        'userId' => 1, //$this->userId
+                        'userId' => $this->userId,
                     ]);
 
                     header('Location: /contact/index');
