@@ -6,6 +6,8 @@ use App\Controllers\ControllerInterface;
 use InvalidArgumentException;
 use Exception;
 
+use App\Components\Api\Api;
+
 class ContactController extends MainController implements ControllerInterface
 {
     /** @var int $userId */
@@ -56,6 +58,14 @@ class ContactController extends MainController implements ControllerInterface
             }
         }
         echo $this->twig->render('add.html.twig', ['error' => $error]);
+    }
+
+    /**
+     * Creation d'un contact
+     */
+    public function create()
+    {
+        //@todo
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Components;
+namespace App\Components\Api;
+
 use App\Components\Api\ApiService;
 
 class Api extends ApiService
@@ -34,7 +35,8 @@ class Api extends ApiService
         if ($this->getRequestMethod() != "POST") {
             $this->response('', 406);
         }
-        $email = $this->_request['email'];
+
+        $email = $this->request['email'];
         if ($email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->response($this->json([
@@ -65,6 +67,3 @@ class Api extends ApiService
 
     }
 }
-
-$api = new Api();
-$api->processApi();

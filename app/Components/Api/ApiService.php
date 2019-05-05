@@ -4,13 +4,24 @@ namespace App\Components\Api;
 
 class ApiService
 {
-    /** @var $request */
+    /**
+     * @var array $request
+     */
     public $request;
-    /** @var string $content_type */
+
+    /**
+     * @var string $content_type
+     */
     public $content_type = "application/json";
-    /** @var string  $methode*/
-    public $methode = "";
-    /** @var int $code */
+
+    /**
+     * @var string  $method
+     */
+    public $method = "";
+
+    /**
+     * @var  int $code
+     */
     public $code = 200;
 
     /**
@@ -27,7 +38,8 @@ class ApiService
     public function processApi()
     {
         $func = strtolower(trim(str_replace("/", "", $this->request['request'])));
-        if ((int)method_exists($this, $func) > 0) {
+
+        if ((int) method_exists($this, $func) > 0) {
             $this->$func();
         } else {
             $this->response('', 404);
@@ -83,7 +95,6 @@ class ApiService
                 $this->response('', 406);
                 break;
         }
-
     }
 
     /**
@@ -94,6 +105,7 @@ class ApiService
     {
         $this->code = ($status) ? $status : 200;
         $this->setHeader();
+
         echo $data;
         exit;
     }
@@ -104,7 +116,7 @@ class ApiService
     private function setHeader()
     {
         header("HTTP/1.1 " . $this->code . " " . $this->getStatusMessage());
-        header("Content-Type:" . $this->_content_type);
+        header("Content-Type:" . $this->content_type);
     }
 
     /**
@@ -114,14 +126,17 @@ class ApiService
     private function cleanInputs($data)
     {
         $cleanInput = array();
+
         if (is_array($data)) {
             foreach ($data as $k => $v) {
                 $cleanInput[$k] = $this->cleanInputs($v);
             }
         } else {
+
             if (get_magic_quotes_gpc()) {
                 $data = trim(stripslashes($data));
             }
+
             $data = strip_tags($data);
             $cleanInput = trim($data);
         }
