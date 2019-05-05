@@ -16,14 +16,14 @@ class Api extends ApiService
         }
 
         $name = $this->request['name'];
-        $palindrome->setName($name);
 
-        if ($name) {
-            if ($palindrome->is_valid()) {
-                $this->response($this->json(["response" => true]), 200);
-            } else {
-                $this->response($this->json(["response" => false]), 200);
-            }
+        if (
+            $name
+            && strtolower($name) === strrev(strtolower($name))
+        ) {
+            $this->response($this->json(["response" => true]), 200);
+        } else {
+            $this->response($this->json(["response" => false]), 200);
         }
     }
 
