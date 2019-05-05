@@ -44,13 +44,13 @@ class ContactController extends MainController implements ControllerInterface
         if (!empty($_POST)) {
 
             try {
-                $errors = $this->validPostData($_POST);
+                $errors = $this->sanitize($_POST);
 
                 if (!empty($errors)) {
                     throw new Exception('POST data are invalid');
                 }
 
-                $response = $this->sanitize($_POST);
+                $response = $this->prepareData($_POST);
 
                 if (!empty($response)) {
 
@@ -102,7 +102,7 @@ class ContactController extends MainController implements ControllerInterface
      * @param array $data
      * @return array
      */
-    public function validPostData(array $data = []): array
+    public function sanitize(array $data = []): array
     {
         $errors = [];
 
@@ -120,6 +120,12 @@ class ContactController extends MainController implements ControllerInterface
             $errors[] = 'Le format de l\'email est invalide';
         }
 
+        $palindrome = json_decode($this->apiClient('palindrome', ['name' => $data['nom']]));
+
+        if ($palindrome->response) {
+            $errors[] = 'Le nom du contact ne peut pas être un palindrome';
+        }
+
         return $errors;
     }
 
@@ -127,7 +133,7 @@ class ContactController extends MainController implements ControllerInterface
      * @param array $data
      * @return array
      */
-    public function sanitize(array $data = []): array
+    public function prepareData(array $data = []): array
     {
         $response = [];
 
@@ -135,20 +141,11 @@ class ContactController extends MainController implements ControllerInterface
         $nom    = ucfirst($data['nom']);
         $email  = strtolower($data['email']);
 
-        $isPalindrome = false; //$this->apiClient('palindrome', ['name' => $data['nom']]);
-        $isEmail = json_decode($this->apiClient('email', ['email' => $data['email']]));
-
-        if (
-            /*!$isPalindrome->response
-            &&*/ $isEmail->response
-            && $prenom
-        ) {
-            $response = [
-                'email'    => $email,
-                'prenom'   => $prenom,
-                'nom'      => $nom
-            ];
-        }
+        $response = [
+            'email'    => $email,
+            'prenom'   => $prenom,
+            'nom'      => $nom
+        ];
 
         return $response;
     }

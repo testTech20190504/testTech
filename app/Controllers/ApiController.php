@@ -19,6 +19,16 @@ class ApiController extends MainController
     /**
      * Endpoint pour API call email verification
      */
+    public function palindrome()
+    {
+        $api = new Api();
+        $api->request['request'] = 'palindrome';
+        return $api->processApi();
+    }
+
+    /**
+     * Endpoint pour API call email verification
+     */
     public function email()
     {
         $api = new Api();

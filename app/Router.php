@@ -17,6 +17,8 @@ Class Router
             $routes = [
                 '/ajax/email',
                 '/api/email',
+                '/ajax/palindrome',
+                '/api/palindrome',
 
                 '/contact/index',
                 '/contact/add',

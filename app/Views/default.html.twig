@@ -54,6 +54,7 @@
 <script>
 
     $("#nom").focusout(function () {
+        $('#alert').hide();
         var nom = $('#nom').val();
         if(nom){
             $.ajax({
@@ -63,7 +64,9 @@
                     'name': nom
                 },
                 success: function (res) {
-                    if (res.response != true) {
+                    var json = jQuery.parseJSON(res);
+
+                    if (json.response !== true) {
                         $('#alert').show();
                         $('#nameStatus').empty().append("<span class='text-success'>- Le nom est valide</span>");
                     } else {
@@ -93,7 +96,7 @@
 
                     $('#progress').hide();
 
-                    if (json.response == true) {
+                    if (json.response) {
                         $('#error').hide();
                         $('#success').show();
                     } else {
