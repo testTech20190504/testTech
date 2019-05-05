@@ -84,8 +84,6 @@ class ContactController extends MainController implements ControllerInterface
 
             } catch (Exception $e) {
                 // silent error
-            } catch (\PDOException $e) {
-                // silent error
             } finally {
                 $error = true;
             }
@@ -100,17 +98,68 @@ class ContactController extends MainController implements ControllerInterface
      */
     public function edit(int $parameter)
     {
-        var_dump($parameter);
+        $error = false;
+
+        $contactToEdit = $this->contact->findById($parameter);
+
+        if ((int) $contactToEdit->userId !== $this->userId) {
+            header('Location: /contact/index');
+        }
+
+        if (!empty($_POST)) {
+
+            try {
+                $errors = $this->sanitize($_POST);
+
+                if (!empty($errors)) {
+                    throw new Exception('POST data are invalid');
+                }
+
+                $response = $this->formatDataForDb($_POST);
+
+                if (!empty($response)) {
+
+                    $this->contact->update(
+                        $contactToEdit->id,
+                        [
+                            'nom'    => $response['nom'],
+                            'prenom' => $response['prenom'],
+                            'email'  => $response['email'],
+                        ]
+                    );
+
+                    header('Location: /contact/index');
+                }
+
+            } catch (Exception $e) {
+                // silent error
+            } finally {
+                $error = true;
+            }
+
+            $data = $_POST;
+        } else {
+            $data = $contactToEdit;
+        }
+
+        echo $this->twig->render('add.html.twig', ['data' => $data, 'error' => $error, 'errors' => $errors]);
     }
 
     /**
      * Suppression d'un contact
      */
-    public function delete()
+    public function delete($parameter)
     {
-        $result = $this->Contact->delete($_GET['id']);
+        $contactToDelete = $this->contact->findById($parameter);
+
+        if ((int) $contactToDelete->userId !== $this->userId) {
+            header('Location: /contact/index');
+        }
+
+        $result = $this->contact->delete($contactToDelete->id);
+
         if ($result) {
-            header('Location: /index.php?p=contact.index');
+            header('Location: /contact/index');
         }
     }
 

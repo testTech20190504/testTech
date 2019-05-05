@@ -6,9 +6,14 @@ use App\Database;
 
 abstract class AbstractModel
 {
-    /** @var string  */
+    /**
+     * @var string
+     */
     protected $model;
-    /** @var Database  */
+
+    /**
+     * @var Database
+     */
     protected $database;
 
     /**
@@ -68,11 +73,13 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $fields
+     * @param string $statment
+     * @param array $fields
+     * @param int $id
      *
      * @return array|bool|mixed|\PDOStatement
      */
-    public function create($fields)
+    private function prepareQueryWithAttributes(string $statement, array $fields, $id = null)
     {
         $fields = $this->cleanInputs($fields);
 
@@ -86,16 +93,34 @@ abstract class AbstractModel
 
         $sqlPart = implode(', ', $sqlParts);
 
-        return $this->query("INSERT INTO {$this->table} SET $sqlPart", $attributes, true);
+        if ($statement === 'create') {
+            $query = "INSERT INTO {$this->table} SET $sqlPart";
+        } else {
+            $query = "UPDATE {$this->table} SET $sqlPart WHERE id = $id";
+        }
+
+        return $this->query($query, $attributes, true);
     }
 
     /**
-     * @param $id
      * @param $fields
+     *
+     * @return array|bool|mixed|\PDOStatement
      */
-    public function update($id, $fields)
+    public function create($fields)
     {
-        //@todo
+        return $this->prepareQueryWithAttributes('create', $fields);
+    }
+
+    /**
+     * Update statement
+     *
+     * @param int $id
+     * @param array $fields
+     */
+    public function update(int $id, array $fields)
+    {
+        return $this->prepareQueryWithAttributes('update', $fields, $id);
     }
 
     /**
