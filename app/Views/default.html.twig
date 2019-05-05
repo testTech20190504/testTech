@@ -40,7 +40,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/index.php?p=contact.index">Accueil <span class="sr-only"></span></a>
+                    <a class="nav-link" href="/contact/index">Accueil <span class="sr-only"></span></a>
                 </li>
             </ul>
         </div>
@@ -58,7 +58,7 @@
         if(nom){
             $.ajax({
                 type: 'POST',
-                url: 'http://leboncoin.local/palindrome',
+                url: 'http://leboncoin.local/ajax/palindrome',
                 data: {
                     'name': nom
                 },
@@ -84,19 +84,21 @@
             $('#progress').show();
             $.ajax({
                 type: 'POST',
-                url: 'http://leboncoin.local/email',
+                url: 'http://leboncoin.local/ajax/email',
                 data: {
                     'email': $('#email').val()
                 },
                 success: function (res) {
+                    var json = jQuery.parseJSON(res);
+
                     $('#progress').hide();
-                    if (res.response == true) {
+
+                    if (json.response == true) {
                         $('#error').hide();
                         $('#success').show();
                     } else {
                         $('#success').hide();
                         $('#error').show();
-                        console.log(res.message);
                     }
                 }
             });

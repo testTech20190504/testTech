@@ -33,20 +33,29 @@ class MainController
     }
 
     /**
-     * @param $methode
+     * @param $method
      * @param array $datas
      * @return mixed
      */
-    public function apiClient($methode, $datas = [])
+    public function apiClient($method, $data = [])
     {
-        $api = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $methode;
+        // on passe par le localhost pour les calls API en interne
+        $api = 'localhost/api/' . $method;
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $api);
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $datas);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
         $return = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            error_log(sprintf('Curl error: %s %s %s', $method, json_encode($data), curl_error($curl)));
+        }
+
         curl_close($curl);
-        return json_decode($return);
+
+        return $return;
     }
 }
